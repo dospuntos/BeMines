@@ -326,6 +326,10 @@ MainWindow::MessageReceived(BMessage *msg)
 		case M_TOGGLE_SCALING:
 		{
 			gScale2x = gScale2x ? false : true;
+			fFieldView->StyleChanged();
+			fCounterView->StyleChanged();
+			fTimerView->StyleChanged();
+			ResetLayout();
 			BMenuItem *item = fMenuBar->FindItem(M_TOGGLE_SCALING);
 			if (item)
 				item->SetMarked(!item->IsMarked());
@@ -514,7 +518,7 @@ MainWindow::TranslateWellKnownThemes(const char *name)
 
 void
 MainWindow::ResetLayout(void)
-{
+{	
 	fCounterView->MoveTo(10, fMenuBar->Frame().bottom + 10);
 	float heightCounter = fCounterView->Bounds().Height();
 
@@ -569,7 +573,7 @@ MainWindow::LoadSettings(void)
 			gPlaySounds = b;
 			
 		bool scale;
-		if (settings.FindBool("scale",&scale) == B_OK)
+		if (settings.FindBool("scale2x",&scale) == B_OK)
 			gScale2x = scale;
 
 		uint16 seconds;
@@ -634,6 +638,7 @@ MainWindow::SaveSettings(void)
 {
 	BMessage settings;
 	settings.AddBool("playsounds",gPlaySounds);
+	settings.AddBool("scale2x", gScale2x);
 	settings.AddInt32("level",gDifficulty);
 	settings.AddString("theme",gGameStyle->StyleName());
 	settings.AddInt16("begbest",gBestTimes[DIFFICULTY_BEGINNER].time);

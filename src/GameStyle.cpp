@@ -7,6 +7,7 @@
 #include <Roster.h>
 #include <String.h>
 #include <TranslatorFormats.h>
+#include "Globals.h"
 
 #undef B_TRANSLATION_CONTEXT
 #define B_TRANSLATION_CONTEXT "GameStyle"
@@ -144,7 +145,11 @@ GameStyle::StyleName(void)
 BRect
 GameStyle::TileSize(void)
 {
-	return fBoxSprite->Bounds();
+	BRect r = fBoxSprite->Bounds();
+	int multiplier = gScale2x ? 2 : 1;
+	r.Set(0,0,r.Width() * multiplier, r.Height() * multiplier);
+	return r;
+	//return fBoxSprite->Bounds();
 }
 
 
