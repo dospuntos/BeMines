@@ -28,6 +28,7 @@ enum
 	M_SHOW_HELP = 'help',
 	M_SET_THEME = 'stth',
 	M_SHOW_SCORES = 'shsc',
+	M_TOGGLE_SCALING = 'tgsc',
 	M_TOGGLE_SOUNDS = 'tgsn',
 	M_SHOW_CUSTOM = 'shcs',
 	M_SHOW_ACHIEVEMENTS = 'shac'
@@ -112,6 +113,10 @@ MainWindow::MainWindow(BRect frame)
 	item = submenu->FindItem(TranslateWellKnownThemes(gGameStyle->StyleName()));
 	if (item)
 		item->SetMarked(true);
+		
+	item = new BMenuItem(B_TRANSLATE("Scale 2X"), new BMessage(M_TOGGLE_SCALING));
+	menu->AddItem(item);
+	item->SetMarked(gScale2x);
 
 	menu->AddSeparatorItem();
 
@@ -314,6 +319,14 @@ MainWindow::MessageReceived(BMessage *msg)
 		{
 			gPlaySounds = gPlaySounds ? false : true;
 			BMenuItem *item = fMenuBar->FindItem(M_TOGGLE_SOUNDS);
+			if (item)
+				item->SetMarked(!item->IsMarked());
+			break;
+		}
+		case M_TOGGLE_SCALING:
+		{
+			gScale2x = gScale2x ? false : true;
+			BMenuItem *item = fMenuBar->FindItem(M_TOGGLE_SCALING);
 			if (item)
 				item->SetMarked(!item->IsMarked());
 			break;
@@ -554,6 +567,10 @@ MainWindow::LoadSettings(void)
 		bool b;
 		if (settings.FindBool("playsounds",&b) == B_OK)
 			gPlaySounds = b;
+			
+		bool scale;
+		if (settings.FindBool("scale",&scale) == B_OK)
+			gScale2x = scale;
 
 		uint16 seconds;
 		if (settings.FindInt16("begbest",(int16*)&seconds) == B_OK)
