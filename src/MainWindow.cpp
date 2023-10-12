@@ -519,12 +519,14 @@ MainWindow::TranslateWellKnownThemes(const char *name)
 void
 MainWindow::ResetLayout(void)
 {	
+	int multiplier = 2; //gScale2x ? 2 : 1;
+
 	fCounterView->MoveTo(10, fMenuBar->Frame().bottom + 10);
-	float heightCounter = fCounterView->Bounds().Height();
+	float heightCounter = fCounterView->Bounds().Height() * multiplier;
 
 	BRect smileRect = gGameStyle->SmileyUp()->Bounds();
 
-	float smileHeight = smileRect.Height();
+	float smileHeight = smileRect.Height() * multiplier;
 	float toolBarHeight = MAX(heightCounter, smileHeight);
 
 	float offsetSmile = (toolBarHeight - smileHeight) / 2;
@@ -534,7 +536,7 @@ MainWindow::ResetLayout(void)
 						fCounterView->Frame().top + offsetCounter);
 
 
-	fSmileyButton->ResizeTo(smileRect.Width(),smileRect.Height());
+	fSmileyButton->ResizeTo(smileRect.Width() * multiplier,smileRect.Height() * multiplier);
 	fSmileyButton->MoveTo( (Bounds().Width() - smileRect.Width()) / 2.0,
 							fCounterView->Frame().top + offsetSmile);
 
