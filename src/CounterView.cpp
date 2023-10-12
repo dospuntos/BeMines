@@ -43,9 +43,9 @@ CounterView::Draw(BRect update)
 	sprintf(countstr,"%.3d",fCount);
 
 	BPoint pt(0,0);
-	BRect rect(pt.x,pt.y,pt.x + fBitmaps[0]->Bounds().Width() * multiplier,fBitmaps[0]->Bounds().Height() * multiplier);
+	BRect rect(pt.x,pt.y,pt.x + fBitmaps[0]->Bounds().Width() * multiplier,
+				fBitmaps[0]->Bounds().Height() * multiplier);
 	DrawBitmap(fBitmaps[countstr[0] - 48], rect);
-	//DrawBitmap(fBitmaps[countstr[0] - 48],pt);
 	pt.x += fBitmaps[0]->Bounds().Width() * multiplier;
 	rect.OffsetTo(pt);
 	DrawBitmap(fBitmaps[countstr[1] - 48],rect);
