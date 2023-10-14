@@ -113,10 +113,10 @@ MainWindow::MainWindow(BRect frame)
 	item = submenu->FindItem(TranslateWellKnownThemes(gGameStyle->StyleName()));
 	if (item)
 		item->SetMarked(true);
-		
+
 	item = new BMenuItem(B_TRANSLATE("Scale 2X"), new BMessage(M_TOGGLE_SCALING));
 	menu->AddItem(item);
-	item->SetMarked(gScale2x);
+	item->SetMarked(gScale == 2);
 
 	menu->AddSeparatorItem();
 
@@ -133,6 +133,7 @@ MainWindow::MainWindow(BRect frame)
 	top->AddChild(fCounterView);
 
 	r = gGameStyle->SmileyUp()->Bounds();
+
 	fSmileyButton = new BitmapButton(r,"smiley",gGameStyle->SmileyUp(),
 									gGameStyle->SmileyDown(), new BMessage(M_NEW_GAME),false,
 									B_FOLLOW_TOP | B_FOLLOW_H_CENTER);
@@ -325,7 +326,7 @@ MainWindow::MessageReceived(BMessage *msg)
 		}
 		case M_TOGGLE_SCALING:
 		{
-			gScale2x = gScale2x ? false : true;
+			gScale = 3 - gScale; // Toggle between 1 and 2
 			fFieldView->StyleChanged();
 			fCounterView->StyleChanged();
 			fTimerView->StyleChanged();
@@ -447,7 +448,7 @@ MainWindow::AchievementCheck(void)
 		gAchievements[gDifficulty][1] = true;
 		numAchieved++;
 	}
-	
+
 	if (numAchieved > 0) {
 		AchievementWindow *achievementwin = new AchievementWindow();
 		BString title;
@@ -518,15 +519,16 @@ MainWindow::TranslateWellKnownThemes(const char *name)
 
 void
 MainWindow::ResetLayout(void)
-{	
-	int multiplier = 2; //gScale2x ? 2 : 1;
-
+{
 	fCounterView->MoveTo(10, fMenuBar->Frame().bottom + 10);
-	float heightCounter = fCounterView->Bounds().Height() * multiplier;
+	float heightCounter = fCounterView->Bounds().Height();
 
 	BRect smileRect = gGameStyle->SmileyUp()->Bounds();
 
-	float smileHeight = smileRect.Height() * multiplier;
+	smileRect.right = smileRect.left + smileRect.Width() * gScale;
+	smileRect.bottom = smileRect.top + smileRect.Height() * gScale;
+
+	float smileHeight = smileRect.Height();
 	float toolBarHeight = MAX(heightCounter, smileHeight);
 
 	float offsetSmile = (toolBarHeight - smileHeight) / 2;
@@ -535,11 +537,9 @@ MainWindow::ResetLayout(void)
 	fTimerView->MoveTo(Bounds().right - 10 - fTimerView->Bounds().Width(),
 						fCounterView->Frame().top + offsetCounter);
 
-
-	fSmileyButton->ResizeTo(smileRect.Width() * multiplier,smileRect.Height() * multiplier);
+	fSmileyButton->ResizeTo(smileRect.Width(),smileRect.Height());
 	fSmileyButton->MoveTo( (Bounds().Width() - smileRect.Width()) / 2.0,
 							fCounterView->Frame().top + offsetSmile);
-
 	fCounterView->MoveBy(0, offsetCounter);
 
 	float bottom  = MAX(fCounterView->Frame().bottom,
@@ -573,10 +573,10 @@ MainWindow::LoadSettings(void)
 		bool b;
 		if (settings.FindBool("playsounds",&b) == B_OK)
 			gPlaySounds = b;
-			
+
 		bool scale;
-		if (settings.FindBool("scale2x",&scale) == B_OK)
-			gScale2x = scale;
+		if (settings.FindBool("scale",&scale) == B_OK)
+			gScale = scale;
 
 		uint16 seconds;
 		if (settings.FindInt16("begbest",(int16*)&seconds) == B_OK)
@@ -640,7 +640,7 @@ MainWindow::SaveSettings(void)
 {
 	BMessage settings;
 	settings.AddBool("playsounds",gPlaySounds);
-	settings.AddBool("scale2x", gScale2x);
+	settings.AddBool("scale", gScale);
 	settings.AddInt32("level",gDifficulty);
 	settings.AddString("theme",gGameStyle->StyleName());
 	settings.AddInt16("begbest",gBestTimes[DIFFICULTY_BEGINNER].time);

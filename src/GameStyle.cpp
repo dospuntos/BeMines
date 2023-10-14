@@ -146,10 +146,8 @@ BRect
 GameStyle::TileSize(void)
 {
 	BRect r = fBoxSprite->Bounds();
-	int multiplier = gScale2x ? 2 : 1;
-	r.Set(0,0,r.Width() * multiplier, r.Height() * multiplier);
+	r.Set(0,0,r.Width() * gScale, r.Height() * gScale);
 	return r;
-	//return fBoxSprite->Bounds();
 }
 
 

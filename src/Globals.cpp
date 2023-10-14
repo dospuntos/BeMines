@@ -6,7 +6,7 @@
 
 bool gCheatMode = false;
 bool gPlaySounds = true;
-bool gScale2x = false;
+uint16 gScale = 1;
 
 BString gThemeName = "Default";
 int32 gDifficulty = DIFFICULTY_BEGINNER;

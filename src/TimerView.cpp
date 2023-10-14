@@ -17,7 +17,7 @@ TimerView::TimerView(void)
 		debugger("BUG: empty timer theme");
 
 	BBitmap *zero = fBitmaps[0];
-	ResizeTo(zero->Bounds().Width() * 3,zero->Bounds().Height());
+	ResizeTo(zero->Bounds().Width() * 3 * gScale,zero->Bounds().Height() * gScale);
 }
 
 
@@ -93,16 +93,15 @@ TimerView::MessageReceived(BMessage *msg)
 void
 TimerView::Draw(BRect update)
 {
-	int multiplier = gScale2x ? 2 : 1;
 	char timestr[5];
 	sprintf(timestr,"%.3d",fTime);
 
 	BPoint pt(0,0);
-	BRect rect(pt.x,pt.y,pt.x + fBitmaps[0]->Bounds().Width() * multiplier,
-				fBitmaps[0]->Bounds().Height() * multiplier);
+	BRect rect(pt.x,pt.y,pt.x + fBitmaps[0]->Bounds().Width() * gScale,
+				fBitmaps[0]->Bounds().Height() * gScale);
 				
 	DrawBitmap(fBitmaps[timestr[0] - 48],rect);
-	pt.x += fBitmaps[0]->Bounds().Width() * multiplier;
+	pt.x += fBitmaps[0]->Bounds().Width() * gScale;
 	rect.OffsetTo(pt);
 	DrawBitmap(fBitmaps[timestr[1] - 48],rect);
 	pt.x += pt.x;
@@ -116,8 +115,7 @@ TimerView::StyleChanged(void)
 {
 	fBitmaps = gGameStyle->LEDSprites();
 	BBitmap *zero = fBitmaps[0];
-	int multiplier = gScale2x ? 2 : 1;
-	ResizeTo(zero->Bounds().Width() * 3 * multiplier,zero->Bounds().Height() * multiplier);
+	ResizeTo(zero->Bounds().Width() * 3 * gScale,zero->Bounds().Height() * gScale);
 }
 
 
